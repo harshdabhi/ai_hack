@@ -83,3 +83,181 @@
 2025-06-07 16:19:23,507 - INFO - Initializing Ollama LLM...
 2025-06-07 16:19:23,508 - INFO - Ollama LLM initialized
 2025-06-07 16:19:23,509 - INFO - Loading medical resource PDF...
+2025-06-07 16:20:43,559 - INFO - Loaded 201 documents from PDF
+2025-06-07 16:20:43,561 - INFO - Splitting documents...
+2025-06-07 16:20:43,593 - INFO - Split into 1105 chunks
+2025-06-07 16:20:43,594 - INFO - Creating vector store...
+2025-06-07 16:22:35,281 - INFO - HTTP Request: POST http://host.docker.internal:11434/api/embed "HTTP/1.1 200 OK"
+2025-06-07 16:22:38,365 - INFO - Vector store created
+2025-06-07 16:22:38,371 - INFO - Creating Tavily tool...
+2025-06-07 16:22:38,374 - INFO - Initializing agent...
+2025-06-07 16:22:38,388 - INFO - Creating retrieval chain...
+2025-06-07 16:22:38,394 - INFO - Component initialization completed in 194.89 seconds
+2025-06-07 16:25:49,872 - INFO - Processing query: i have severe chest pain and trouble breathing
+2025-06-07 16:25:49,962 - INFO - HTTP Request: POST http://host.docker.internal:11434/api/embed "HTTP/1.1 200 OK"
+2025-06-07 16:25:53,388 - INFO - Query processed in 3.51 seconds
+2025-06-07 16:26:00,592 - INFO - Processing query: i have severe chest pain and trouble breathing 
+2025-06-07 16:26:00,947 - INFO - HTTP Request: POST http://host.docker.internal:11434/api/embed "HTTP/1.1 200 OK"
+2025-06-07 16:26:42,497 - INFO - Starting component initialization...
+2025-06-07 16:26:42,498 - INFO - Tavily API key set
+2025-06-07 16:26:42,498 - INFO - Initializing Ollama LLM...
+2025-06-07 16:26:42,500 - ERROR - Error initializing components: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+Traceback (most recent call last):
+  File "/workspaces/projects/AI_hackenton/app.py", line 201, in initialize_components
+    llm = Ollama(
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/_api/deprecation.py", line 224, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-06-07 16:27:01,974 - INFO - Starting component initialization...
+2025-06-07 16:27:01,975 - INFO - Tavily API key set
+2025-06-07 16:27:01,976 - INFO - Initializing Ollama LLM...
+2025-06-07 16:27:01,978 - ERROR - Error initializing components: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=1000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+Traceback (most recent call last):
+  File "/workspaces/projects/AI_hackenton/app.py", line 201, in initialize_components
+    llm = Ollama(
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/_api/deprecation.py", line 224, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=1000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-06-07 16:27:10,201 - INFO - Starting component initialization...
+2025-06-07 16:27:10,202 - INFO - Tavily API key set
+2025-06-07 16:27:10,202 - INFO - Initializing Ollama LLM...
+2025-06-07 16:27:10,203 - ERROR - Error initializing components: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=1000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+Traceback (most recent call last):
+  File "/workspaces/projects/AI_hackenton/app.py", line 201, in initialize_components
+    llm = Ollama(
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/_api/deprecation.py", line 224, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=1000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-06-07 16:27:29,852 - INFO - Starting component initialization...
+2025-06-07 16:27:29,853 - INFO - Tavily API key set
+2025-06-07 16:27:29,853 - INFO - Initializing Ollama LLM...
+2025-06-07 16:27:29,854 - ERROR - Error initializing components: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+Traceback (most recent call last):
+  File "/workspaces/projects/AI_hackenton/app.py", line 201, in initialize_components
+    llm = Ollama(
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/_api/deprecation.py", line 224, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-06-07 16:27:39,675 - INFO - Starting component initialization...
+2025-06-07 16:27:39,675 - INFO - Tavily API key set
+2025-06-07 16:27:39,675 - INFO - Initializing Ollama LLM...
+2025-06-07 16:27:39,676 - ERROR - Error initializing components: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=1000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+Traceback (most recent call last):
+  File "/workspaces/projects/AI_hackenton/app.py", line 201, in initialize_components
+    llm = Ollama(
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/_api/deprecation.py", line 224, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=1000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-06-07 16:34:10,296 - INFO - Starting component initialization...
+2025-06-07 16:34:10,297 - INFO - Tavily API key set
+2025-06-07 16:34:10,298 - INFO - Initializing Ollama LLM...
+2025-06-07 16:34:10,299 - ERROR - Error initializing components: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+Traceback (most recent call last):
+  File "/workspaces/projects/AI_hackenton/app.py", line 203, in initialize_components
+    llm = Ollama(
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/_api/deprecation.py", line 224, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-06-07 16:34:12,910 - INFO - Starting component initialization...
+2025-06-07 16:34:12,911 - INFO - Tavily API key set
+2025-06-07 16:34:12,912 - INFO - Initializing Ollama LLM...
+2025-06-07 16:34:12,913 - ERROR - Error initializing components: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+Traceback (most recent call last):
+  File "/workspaces/projects/AI_hackenton/app.py", line 203, in initialize_components
+    llm = Ollama(
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/_api/deprecation.py", line 224, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/vscode/anaconda3/envs/llm/lib/python3.10/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Ollama
+max_tokens
+  Extra inputs are not permitted [type=extra_forbidden, input_value=10000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-06-07 16:34:48,671 - INFO - Starting component initialization...
+2025-06-07 16:34:48,672 - INFO - Tavily API key set
+2025-06-07 16:34:48,672 - INFO - Initializing Ollama LLM...
+2025-06-07 16:34:48,673 - INFO - Ollama LLM initialized
+2025-06-07 16:34:48,748 - INFO - Creating new vector store...
+2025-06-07 16:36:04,156 - INFO - Loaded 201 documents from PDF
+2025-06-07 16:36:04,187 - INFO - Split into 1105 chunks
+2025-06-07 16:36:04,467 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-07 16:37:42,640 - INFO - HTTP Request: POST http://host.docker.internal:11434/api/embed "HTTP/1.1 200 OK"
+2025-06-07 16:37:45,254 - INFO - Created and persisted new vector store
+2025-06-07 16:37:45,256 - INFO - Creating Tavily tool...
+2025-06-07 16:37:45,258 - INFO - Initializing agent...
+2025-06-07 16:37:45,267 - INFO - Creating retrieval chain...
+2025-06-07 16:37:45,271 - INFO - Component initialization completed in 176.60 seconds
+2025-06-07 16:37:58,549 - INFO - Processing query: i have severe chest pain
+2025-06-07 16:37:58,653 - INFO - HTTP Request: POST http://host.docker.internal:11434/api/embed "HTTP/1.1 200 OK"
+2025-06-07 16:38:10,114 - INFO - Query processed in 11.56 seconds
+2025-06-07 16:38:32,542 - INFO - Processing query: i have severe chest pain and left hand is give me 
+2025-06-07 16:38:32,631 - INFO - HTTP Request: POST http://host.docker.internal:11434/api/embed "HTTP/1.1 200 OK"
+2025-06-07 16:38:36,853 - INFO - Query processed in 4.31 seconds
+2025-06-07 16:39:13,949 - INFO - Processing query: i have severe chest pain and left hand what can be potential cause and medication
+2025-06-07 16:39:14,087 - INFO - HTTP Request: POST http://host.docker.internal:11434/api/embed "HTTP/1.1 200 OK"
+2025-06-07 16:39:23,640 - INFO - Query processed in 9.69 seconds

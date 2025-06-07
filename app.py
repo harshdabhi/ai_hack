@@ -70,8 +70,6 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "components_initialized" not in st.session_state:
     st.session_state.components_initialized = False
-if "db_initialized" not in st.session_state:
-    st.session_state.db_initialized = False
 if "llm" not in st.session_state:
     st.session_state.llm = None
 if "retriever" not in st.session_state:
@@ -101,7 +99,7 @@ def create_medical_prompt():
     - Infer vital sign implications
     - Flag emotional urgency cues
 
-    ### Standard Response Format
+    ### Standard Response Format - YOU MUST FOLLOW THIS EXACT FORMAT:
 
     1. Structured Symptom Summary
     ```
@@ -111,6 +109,8 @@ def create_medical_prompt():
     • Severity: [1-10 scale if provided]
     • Associated symptoms: [List]
     • Risk factors: [If mentioned]
+    • Vital signs implications: [If relevant]
+    • Emotional/psychological factors: [If present]
     ```
 
     2. Likelihood Matrix
@@ -129,8 +129,18 @@ def create_medical_prompt():
     « Either way → "Recommend checking: [specific tests]"
     ```
 
-    4. Sources of Information
+    4. Detailed Analysis
+    ```
+    • Pathophysiology: [Brief explanation of the condition]
+    • Risk factors: [Detailed list of risk factors]
+    • Complications: [Potential complications if untreated]
+    • Treatment options: [Available treatments and their effectiveness]
+    • Prevention: [Preventive measures if applicable]
+    ```
+
+    5. Sources of Information
     - Reference: [Document/Web sources used]
+    - Evidence level: [Strength of evidence]
 
     ### Emergency Response Protocol
     🚨 Immediate triggers: Chest pain + cardiac risk, severe SOB, neurological symptoms, severe headache, active bleeding, suicidal ideation
@@ -143,11 +153,19 @@ def create_medical_prompt():
     
     Question: {input}
     
-    Remember to:
-    1. Always include appropriate medical disclaimers
-    2. Recommend consulting healthcare professionals
-    3. Flag any potential emergency situations
-    4. Provide evidence-based information
+    IMPORTANT INSTRUCTIONS:
+    1. You MUST follow the exact format above
+    2. You MUST include ALL sections in your response
+    3. You MUST use the exact formatting shown
+    4. You MUST provide detailed information in each section
+    5. You MUST include appropriate medical disclaimers
+    6. You MUST recommend consulting healthcare professionals
+    7. You MUST flag any potential emergency situations
+    8. You MUST provide evidence-based information
+    9. You MUST be thorough and detailed in your response
+    10. You MUST include all relevant medical terminology
+    11. You MUST explain complex terms in simple language
+    12. You MUST provide specific recommendations when possible
     """)
 
 def display_chat_message(role: str, content: str):
@@ -185,20 +203,33 @@ def initialize_components():
         llm = Ollama(
             model="Gemma3:1b",
             base_url="http://host.docker.internal:11434",
-            temperature=0.9,
-            max_tokens=10000
+            temperature=0.7,  # Lower temperature for m
         )
         logger.info("Ollama LLM initialized")
 
-        # Initialize vector store only if not already done
-        if not st.session_state.db_initialized:
-            logger.info("Loading medical resource PDF...")
+        # Initialize embeddings
+        embeddings = OllamaEmbeddings(
+            model="nomic-embed-text",
+            base_url="http://host.docker.internal:11434"
+        )
+
+        # Check if database exists
+        persist_directory = "./chroma_db"
+        if os.path.exists(persist_directory) and os.path.isdir(persist_directory):
+            logger.info("Using existing vector store from disk")
+            db = Chroma(
+                persist_directory=persist_directory,
+                embedding_function=embeddings
+            )
+            logger.info("Loaded existing vector store")
+        else:
+            logger.info("Creating new vector store...")
+            # Load and process the medical resource
             loader = PyPDFLoader('./resourcev1.pdf')
             docs = loader.load()
             logger.info(f"Loaded {len(docs)} documents from PDF")
             
             # Split documents
-            logger.info("Splitting documents...")
             text_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=1000,
                 chunk_overlap=200
@@ -206,26 +237,14 @@ def initialize_components():
             documents = text_splitter.split_documents(docs)
             logger.info(f"Split into {len(documents)} chunks")
             
-            # Create vector store
-            logger.info("Creating vector store...")
+            # Create and persist vector store
             db = Chroma.from_documents(
                 documents,
-                OllamaEmbeddings(
-                    model="nomic-embed-text",
-                    base_url="http://host.docker.internal:11434"
-                )
+                embeddings,
+                persist_directory=persist_directory
             )
-            logger.info("Vector store created")
-            st.session_state.db_initialized = True
-        else:
-            logger.info("Using existing vector store")
-            db = Chroma(
-                persist_directory="./chroma_db",
-                embedding_function=OllamaEmbeddings(
-                    model="nomic-embed-text",
-                    base_url="http://host.docker.internal:11434"
-                )
-            )
+            db.persist()
+            logger.info("Created and persisted new vector store")
         
         # Create retriever
         retriever = db.as_retriever()
