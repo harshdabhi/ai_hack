@@ -12,19 +12,6 @@ from langchain.tools.retriever import create_retriever_tool
 from langchain.agents import initialize_agent, AgentType
 from langchain.tools import Tool
 import os
-import logging
-from datetime import datetime
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('medical_assistant.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
 
 # Set page config
 st.set_page_config(
@@ -70,8 +57,6 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "components_initialized" not in st.session_state:
     st.session_state.components_initialized = False
-if "db_initialized" not in st.session_state:
-    st.session_state.db_initialized = False
 if "llm" not in st.session_state:
     st.session_state.llm = None
 if "retriever" not in st.session_state:
@@ -80,10 +65,6 @@ if "agent" not in st.session_state:
     st.session_state.agent = None
 if "retrieval_chain" not in st.session_state:
     st.session_state.retrieval_chain = None
-if "last_question" not in st.session_state:
-    st.session_state.last_question = None
-if "current_response" not in st.session_state:
-    st.session_state.current_response = None
 
 def create_medical_prompt():
     """Create the medical prompt template"""
@@ -173,65 +154,40 @@ def check_emergency_symptoms(text: str) -> bool:
 def initialize_components():
     """Initialize all components including LLM, embeddings, and tools"""
     try:
-        logger.info("Starting component initialization...")
-        start_time = datetime.now()
-
         # Set Tavily API key
         os.environ["TAVILY_API_KEY"] = "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"
-        logger.info("Tavily API key set")
 
         # Initialize Ollama LLM
-        logger.info("Initializing Ollama LLM...")
         llm = Ollama(
             model="Gemma3:1b",
             base_url="http://host.docker.internal:11434",
-            temperature=0.9,
-            max_tokens=10000
+            temperature=0.9
         )
-        logger.info("Ollama LLM initialized")
 
-        # Initialize vector store only if not already done
-        if not st.session_state.db_initialized:
-            logger.info("Loading medical resource PDF...")
-            loader = PyPDFLoader('./resourcev1.pdf')
-            docs = loader.load()
-            logger.info(f"Loaded {len(docs)} documents from PDF")
-            
-            # Split documents
-            logger.info("Splitting documents...")
-            text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=1000,
-                chunk_overlap=200
+        # Load and process the medical resource
+        loader = PyPDFLoader('./resourcev1.pdf')
+        docs = loader.load()
+        
+        # Split documents
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200
+        )
+        documents = text_splitter.split_documents(docs)
+        
+        # Create vector store
+        db = Chroma.from_documents(
+            documents,
+            OllamaEmbeddings(
+                model="nomic-embed-text",
+                base_url="http://host.docker.internal:11434"
             )
-            documents = text_splitter.split_documents(docs)
-            logger.info(f"Split into {len(documents)} chunks")
-            
-            # Create vector store
-            logger.info("Creating vector store...")
-            db = Chroma.from_documents(
-                documents,
-                OllamaEmbeddings(
-                    model="nomic-embed-text",
-                    base_url="http://host.docker.internal:11434"
-                )
-            )
-            logger.info("Vector store created")
-            st.session_state.db_initialized = True
-        else:
-            logger.info("Using existing vector store")
-            db = Chroma(
-                persist_directory="./chroma_db",
-                embedding_function=OllamaEmbeddings(
-                    model="nomic-embed-text",
-                    base_url="http://host.docker.internal:11434"
-                )
-            )
+        )
         
         # Create retriever
         retriever = db.as_retriever()
         
         # Create Tavily tool
-        logger.info("Creating Tavily tool...")
         tavily_tool = Tool(
             name="tavily_search",
             description="Search the web for general information using Tavily.",
@@ -252,7 +208,6 @@ def initialize_components():
         prompt = create_medical_prompt()
         
         # Initialize agent
-        logger.info("Initializing agent...")
         agent = initialize_agent(
             tools=tools,
             llm=llm,
@@ -262,7 +217,6 @@ def initialize_components():
         )
         
         # Create retrieval chain
-        logger.info("Creating retrieval chain...")
         retrieval_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
         
         # Store components in session state
@@ -272,34 +226,21 @@ def initialize_components():
         st.session_state.retrieval_chain = retrieval_chain
         st.session_state.components_initialized = True
         
-        end_time = datetime.now()
-        logger.info(f"Component initialization completed in {(end_time - start_time).total_seconds():.2f} seconds")
-        
         return True
     except Exception as e:
-        logger.error(f"Error initializing components: {str(e)}", exc_info=True)
+        st.error(f"Error initializing components: {str(e)}")
         return False
 
 def hybrid_query(input_text: str):
     """Hybrid query function that tries retrieval first, then falls back to agent"""
-    try:
-        logger.info(f"Processing query: {input_text}")
-        start_time = datetime.now()
+    response = st.session_state.retrieval_chain.invoke({"query": input_text})
+    answer = response.get("result", "").strip()
 
-        response = st.session_state.retrieval_chain.invoke({"query": input_text})
-        answer = response.get("result", "").strip()
-
-        if not answer or "I don't know" in answer or "No relevant" in answer:
-            logger.info("No relevant local information found, falling back to web search...")
-            st.info("Searching web for additional information...")
-            answer = st.session_state.agent.run(input_text)
-
-        end_time = datetime.now()
-        logger.info(f"Query processed in {(end_time - start_time).total_seconds():.2f} seconds")
+    if not answer or "I don't know" in answer or "No relevant" in answer:
+        st.info("Searching web for additional information...")
+        return st.session_state.agent.run(input_text)
+    else:
         return answer
-    except Exception as e:
-        logger.error(f"Error processing query: {str(e)}", exc_info=True)
-        return "I apologize, but I encountered an error while processing your query. Please try again."
 
 # Streamlit UI
 st.title("👨‍⚕️ Medical AI Assistant")
@@ -337,9 +278,7 @@ with col2:
     # Chat input
     user_question = st.text_input("Describe your symptoms:", key="user_input")
     
-    if user_question and user_question != st.session_state.last_question:
-        st.session_state.last_question = user_question
-        
+    if user_question:
         # Check for emergency symptoms
         if check_emergency_symptoms(user_question):
             st.markdown("""
@@ -351,6 +290,5 @@ with col2:
         
         with st.spinner("Analyzing symptoms..."):
             response = hybrid_query(user_question)
-            st.session_state.current_response = response
             st.session_state.chat_history.append((user_question, response))
-            display_chat_message("assistant", response)
+            st.rerun()  
